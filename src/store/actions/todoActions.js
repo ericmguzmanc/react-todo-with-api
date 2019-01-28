@@ -1,6 +1,6 @@
 import {
   CREATE_TODO, DELETE_TODO, RECEIVE_TODOS,
-  REQUEST_TODOS, UPDATE_TODO
+  REQUEST_TODOS, UPDATE_TODO, SET_EDIT_MODE
 } from '../../util/constants/action.constants';
 import TodoService from '../../util/services/todo.service';
 
@@ -31,10 +31,16 @@ export function updateTodo(payload) {
   }
 }
 
-export function deleteTodo(payload) {
+export function deleteTodo(id) {
   return {
     type: DELETE_TODO,
-    payload: payload
+    id: id
+  }
+}
+
+export function setToDoEditMode() {
+  return {
+    type: SET_EDIT_MODE
   }
 }
 
@@ -44,6 +50,33 @@ export function fetchTodos() {
     TodoService.getTodos()
       .then((res) => {
         dispatch(receiveTodos(res));
+      });
+  }
+}
+
+export function addTodo(payload) {
+  return dispatch => {
+    TodoService.postTodo(payload)
+      .then((res) => {
+        dispatch(createTodo(res.data));
+      });
+  }
+}
+
+export function removeTodo(id) {
+  return dispatch => {
+    TodoService.deleteTodo(Number(id))
+      .then((res) => {
+        dispatch(deleteTodo(id))
+      });
+  }
+}
+
+export function putTodo(payload) {
+  return dispatch => {
+    TodoService.updateTodo(payload)
+      .then((res) => {
+        dispatch(updateTodo(res.data))
       });
   }
 }

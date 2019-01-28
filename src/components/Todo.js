@@ -1,14 +1,39 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { Card, Container, CardBody, Spinner, Col, ListGroup, CardFooter, Button } from 'reactstrap';
+import { Card, Container, CardBody, Spinner, Col, ListGroup, CardFooter, Button, CardHeader } from 'reactstrap';
+import TodoForm from './TodoForm';
 import TodoItem from './TodoItem';
 import { fetchTodos } from '../store/actions/todoActions';
 
+
 class Todo extends PureComponent {
   
+  state = {
+    editMode: false,
+    editTodoId: null
+  }
+
   componentDidMount() {
     this.props.fetchTodos();
   }
+
+  openTodoForm = () => {
+    this.setState({
+      editMode: !this.state.editMode
+    })
+  }
+
+  editTodoForm = (id) => {
+    this.setState({
+      editTodoId: id,
+      editMode: !this.state.editMode
+    });
+    
+    console.log('edit todo form ', id, this.state)
+
+  }
+
+
 
   render() {
 
@@ -17,27 +42,36 @@ class Todo extends PureComponent {
     return(
       <Fragment>
         <Container className="">
-          {/* <Col xs="8"> */}
-            <Card style={{borderRadius: "15px", minHeight: "18rem", width: "28rem", margin: "0 auto", marginTop:"5%", }} >
+          <Card style={{borderRadius: "15px", minHeight: "18rem", width: "28rem", margin: "0 auto", marginTop:"5%", }} >
+            <CardHeader className="text-center">
               <span className="text-center" style={{fontWeight: "bold", fontSize: "1.4rem", marginTop: "5%"}}>
-                Todo App
+                ToDo
               </span>
-              <CardBody>
-                <ListGroup>
-
+            </CardHeader>
+            <CardBody>
+              <div className="text-center" style={{marginBottom:"15px"}}>
                 {
-                  this.props.todos.map((todo, index) => (
-                    <TodoItem key={index} todo={{title:todo.title, description: todo.description, index: index}}/>
-                  ))
-
+                  !this.state.editMode &&
+                  <Button outline color="secondary" onClick={this.openTodoForm}>
+                    <span role="img" aria-label="add emoji">➕</span>
+                  </Button>
                 }
-                </ListGroup>
-              </CardBody>
-              <CardFooter className="text-right">
-                <Button outline color="secondary">➕ Add</Button>
-              </CardFooter>
-            </Card>
-          {/* </Col> */}
+              </div>
+              <ListGroup>
+              {
+                this.state.editMode &&
+                <TodoForm closeFunc={this.openTodoForm} todoId={this.state.editTodoId}/>
+              }
+              {
+                !this.state.editMode &&
+                this.props.todos.map((todo, index) => (
+                  <TodoItem key={index} edit={this.editTodoForm} todo={{title:todo.title, description: todo.description, id: todo._id, index: index}}/>
+                ))
+
+              }
+              </ListGroup>
+            </CardBody>
+          </Card>
         </Container>
       </Fragment>
     );

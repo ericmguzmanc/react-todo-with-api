@@ -10,12 +10,24 @@ class TodoService {
       instance = this;
     }
 
-    this.apiUrl =  API_URL;
+    this.apiUrl =  `${API_URL}/todo`;
     return instance;
   }
 
   getTodos() {
-    return axios.get(`${this.apiUrl}/todo`);
+    return axios.get(this.apiUrl);
+  }
+
+  postTodo(payload) {
+    return axios.post(this.apiUrl, payload);
+  }
+
+  updateTodo(payload) {
+    return axios.put(this.apiUrl, payload);
+  }
+
+  deleteTodo(id) {
+    return axios.delete(this.apiUrl, { data: { "_id": id } } );
   }
 
 }

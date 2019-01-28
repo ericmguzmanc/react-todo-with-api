@@ -1,28 +1,36 @@
 import React, { Fragment, PureComponent } from 'react';
-import { ListGroupItem, Col, ButtonGroup, Button, Row } from 'reactstrap';
- 
+import { connect } from 'react-redux';
+import { ListGroupItem, Col, Row } from 'reactstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; 
+import './styles/TodoItem.css';
+import { removeTodo } from '../store/actions/todoActions';
 class TodoItem extends PureComponent {
 
 
+  handleDelete = (id) =>  {
+    this.props.removeTodo(id)
+  }
+
   render() {
 
-    console.log(this.props)
     const { todo } = this.props;
 
     return(
       <Fragment>
-        <ListGroupItem>
+        <ListGroupItem style={{borderRadius:"15px", marginBottom:"10px"}}>
           <Row>
             <Col xs="6">
               <span>{`${todo.index + 1}.  `}</span>
               <span style={{display:"inline", fontWeight: "bold"}}>{todo.title}</span>
               <p>{todo.description} </p>
             </Col>
-            <Col xs="4" >
-              <ButtonGroup>
-                <Button outline color="primary">One</Button>
-                <Button outline color="primary">Three</Button>
-              </ButtonGroup>
+            <Col xs="6">
+              <div className="float-right">
+              {todo._id}
+                <FontAwesomeIcon icon={faEdit} className="mr-1 todo-item-button" onClick={() => this.props.edit(todo.id)}/>
+                <FontAwesomeIcon icon={faTrashAlt} className="mr-1 todo-item-button" onClick={() => this.handleDelete(todo.id)}/>
+              </div>
             </Col>
           </Row>
         </ListGroupItem>
@@ -31,4 +39,5 @@ class TodoItem extends PureComponent {
   }
 }
 
-export default TodoItem;
+
+export default connect(null, { removeTodo })(TodoItem);
