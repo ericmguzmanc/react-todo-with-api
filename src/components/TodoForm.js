@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWindowClose } from '@fortawesome/free-solid-svg-icons'; 
 import { ListGroupItem, Col, Row, Form, FormGroup, Label, Input, Button } from 'reactstrap';
 import './styles/TodoItem.css';
-import { addTodo, putTodo } from '../store/actions/todoActions';
+import { addTodo, putTodo, setTodoIdForEdit } from '../store/actions/todoActions';
 
 
 class TodoForm extends PureComponent {
@@ -17,12 +17,12 @@ class TodoForm extends PureComponent {
 
   componentDidMount() {
 
-    const { todoId, todos } = this.props;
+    const { todos, todoIdForEdit } = this.props;
+    console.log('mountend ', todoIdForEdit)
 
-    if (todoId != null) {
-      const editTodoIndex = todos.findIndex((td) => td._id === todoId);
+    if (todoIdForEdit !== 0) {
+      const editTodoIndex = todos.findIndex((td) => td._id === todoIdForEdit);
       const editTodo = todos[editTodoIndex];
-      
       this.setState({
         _id: editTodo._id,
         title: editTodo.title,
@@ -40,13 +40,28 @@ class TodoForm extends PureComponent {
   handleSubmit = (event) => {
     event.preventDefault();
 
-    if (this.state.id !== 0) {
+    if (this.state._id !== 0) {
       this.props.putTodo(this.state);
     } else {
-      this.props.addTodo(this.state);
+      this.props.addTodo({
+        title: this.state.title,
+        description: this.state.description
+      });
     }
 
     this.props.closeFunc();
+  }
+
+  handleFormClose = () => {
+    this.setState({
+      _id: 0,
+      title: '',
+      description: ''
+    }, () => {
+      console.log('here on handleFormClose ', this.props);
+      this.props.setTodoIdForEdit(0);
+      this.props.closeFunc();
+    });
   }
 
   render() {
@@ -55,7 +70,7 @@ class TodoForm extends PureComponent {
         <ListGroupItem style={{borderRadius:"15px", marginBottom:"10px"}}>
           <Row className="float-right">
             <div style={{marginTop: "-8px"}}>
-              <FontAwesomeIcon icon={faWindowClose} className="mr-1 todo-item-button" onClick={this.props.closeFunc} color="red" style={{borderRadius: "15px"}}/>
+              <FontAwesomeIcon icon={faWindowClose} className="mr-1 todo-item-button" onClick={this.handleFormClose} color="red" style={{borderRadius: "15px"}}/>
             </div>
           </Row>
           <Row style={{marginTop:"20px"}}>
@@ -87,10 +102,19 @@ class TodoForm extends PureComponent {
 }
 
 
-const mapStateToProps = ({ todos }) => {
+const mapStateToProps = ({ todos, todoIdForEdit }) => {
   return {
-    todos
+    todos,
+    todoIdForEdit
   }
 }
 
-export default connect(mapStateToProps, { addTodo, putTodo })(TodoForm);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addTodo: (payload) => dispatch(addTodo(payload)),
+    putTodo: (payload) => dispatch(putTodo(payload)),
+    setTodoIdForEdit: (id) => dispatch(setTodoIdForEdit(id))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TodoForm);

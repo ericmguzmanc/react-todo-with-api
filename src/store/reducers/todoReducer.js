@@ -1,14 +1,16 @@
 import { 
   CREATE_TODO, DELETE_TODO, RECEIVE_TODOS,
-  REQUEST_TODOS, UPDATE_TODO, SET_EDIT_MODE
+  REQUEST_TODOS, UPDATE_TODO, TODOID_FOR_EDIT
 } from '../../util/constants/action.constants'
 
 export default function todoReducer( state = {
   isLoading: false,
+  todoIdForEdit: 0,
   todos: []
 }, action) {
   switch(action.type) {
     case CREATE_TODO:
+      console.log('create todo ', action.payload)
       return Object.assign({}, state, {
         todos: [...state.todos, action.payload]
       });
@@ -28,15 +30,8 @@ export default function todoReducer( state = {
 
     case UPDATE_TODO: 
 
-      console.log('payload ', action.payload);
-
-      const editTodoIndex = state.todos.findIndex((td) => td._id === action.payload._id);
-      const editTodo = state.todos[editTodoIndex];
-      const todos = state.todos.filter((td) => td._id !== editTodo._id)
-
       const fTodos = state.todos.map((elm) => {
-        if(elm._id === editTodo._id) {
-          console.log('action ', action.payload)
+        if(elm._id === action.payload._id) {
           return Object.assign({}, elm, {
             _id: elm._id,
             title: action.payload.title,
@@ -47,15 +42,13 @@ export default function todoReducer( state = {
         }
       })
 
-      console.log('ftodos ', fTodos)
-
       return Object.assign({}, state, {
         todos: [...fTodos]
       });
-
-    case SET_EDIT_MODE:
+    
+    case TODOID_FOR_EDIT:
       return Object.assign({}, state, {
-
+        todoIdForEdit: action.id
       });
 
     default:

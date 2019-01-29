@@ -1,6 +1,6 @@
 import React, { Fragment, PureComponent } from 'react';
 import { connect } from 'react-redux';
-import { Card, Container, CardBody, Spinner, Col, ListGroup, CardFooter, Button, CardHeader } from 'reactstrap';
+import { Card, Container, CardBody, ListGroup, Button, CardHeader } from 'reactstrap';
 import TodoForm from './TodoForm';
 import TodoItem from './TodoItem';
 import { fetchTodos } from '../store/actions/todoActions';
@@ -10,7 +10,6 @@ class Todo extends PureComponent {
   
   state = {
     editMode: false,
-    editTodoId: null
   }
 
   componentDidMount() {
@@ -23,21 +22,14 @@ class Todo extends PureComponent {
     })
   }
 
-  editTodoForm = (id) => {
+  editTodoForm = () => {
     this.setState({
-      editTodoId: id,
       editMode: !this.state.editMode
     });
-    
-    console.log('edit todo form ', id, this.state)
-
   }
 
 
-
   render() {
-
-
 
     return(
       <Fragment>
@@ -60,7 +52,7 @@ class Todo extends PureComponent {
               <ListGroup>
               {
                 this.state.editMode &&
-                <TodoForm closeFunc={this.openTodoForm} todoId={this.state.editTodoId}/>
+                <TodoForm closeFunc={this.openTodoForm}/>
               }
               {
                 !this.state.editMode &&

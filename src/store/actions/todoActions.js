@@ -1,6 +1,6 @@
 import {
   CREATE_TODO, DELETE_TODO, RECEIVE_TODOS,
-  REQUEST_TODOS, UPDATE_TODO, SET_EDIT_MODE
+  REQUEST_TODOS, UPDATE_TODO, TODOID_FOR_EDIT
 } from '../../util/constants/action.constants';
 import TodoService from '../../util/services/todo.service';
 
@@ -38,9 +38,11 @@ export function deleteTodo(id) {
   }
 }
 
-export function setToDoEditMode() {
+export function setTodoIdForEdit(id) {
+  console.log('got in setTodoIdForEdit', id )
   return {
-    type: SET_EDIT_MODE
+    type: TODOID_FOR_EDIT,
+    id: id
   }
 }
 
@@ -56,6 +58,7 @@ export function fetchTodos() {
 
 export function addTodo(payload) {
   return dispatch => {
+    console.log('addTodo payload, ', payload)
     TodoService.postTodo(payload)
       .then((res) => {
         dispatch(createTodo(res.data));
@@ -76,7 +79,7 @@ export function putTodo(payload) {
   return dispatch => {
     TodoService.updateTodo(payload)
       .then((res) => {
-        dispatch(updateTodo(res.data))
+        dispatch(updateTodo(payload))
       });
   }
 }

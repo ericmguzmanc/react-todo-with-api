@@ -4,12 +4,17 @@ import { ListGroupItem, Col, Row } from 'reactstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons'; 
 import './styles/TodoItem.css';
-import { removeTodo } from '../store/actions/todoActions';
+import { removeTodo, setTodoIdForEdit } from '../store/actions/todoActions';
 class TodoItem extends PureComponent {
 
 
   handleDelete = (id) =>  {
     this.props.removeTodo(id)
+  }
+
+  handleEditClick = (id) => {
+    this.props.setTodoIdForEdit(id);
+    this.props.edit();
   }
 
   render() {
@@ -27,8 +32,7 @@ class TodoItem extends PureComponent {
             </Col>
             <Col xs="6">
               <div className="float-right">
-              {todo._id}
-                <FontAwesomeIcon icon={faEdit} className="mr-1 todo-item-button" onClick={() => this.props.edit(todo.id)}/>
+                <FontAwesomeIcon icon={faEdit} className="mr-1 todo-item-button" onClick={() => this.handleEditClick(todo.id)}/>
                 <FontAwesomeIcon icon={faTrashAlt} className="mr-1 todo-item-button" onClick={() => this.handleDelete(todo.id)}/>
               </div>
             </Col>
@@ -40,4 +44,4 @@ class TodoItem extends PureComponent {
 }
 
 
-export default connect(null, { removeTodo })(TodoItem);
+export default connect(null, { removeTodo, setTodoIdForEdit })(TodoItem);
